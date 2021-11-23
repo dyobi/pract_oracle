@@ -339,25 +339,13 @@ FLASHBACK TABLE emergency_contact TO BEFORE DROP;
 DROP TABLE emergency_contact purge;
 
 
+
 -- 제약조건
 -- primary key : 중복x nullx (pk)
 -- foreign key : 중복o nullo (fk)
 -- unique : 중복x null은 무관 (uk)
 -- not null : null만 아니면됨 (nn)
 -- check : price > 0 (ck)
-DROP TABLE memidtable;
-DROP TABLE memtable;
-CREATE TABLE memidtable (
-    memid number(6) CONSTRAINT memidtable_memid_pk PRIMARY KEY,
-    memname varchar2(20)
-);
-CREATE TABLE memtable (
-    memname varchar2(20) CONSTRAINT memtable_memname_pk PRIMARY KEY,
-    memtel varchar2(20) CONSTRAINT memtable_memtel_uk UNIQUE,
-    memhobby varchar2(30) CONSTRAINT memtable_memhobby_nn NOT NULL,
-    membi number(5) CONSTRAINT memtable_membi_ck CHECK (membi>1000),
-    memid number(6) CONSTRAINT memtable_memid_fk REFERENCES memidtable(memid)
-);
 
 -- 제약조건 방식 2가지
 -- 1, column level 방식 : 칼럼명에 이어서
@@ -367,4 +355,66 @@ CREATE TABLE memtable (
 -- 제약조건 사용법
 -- constraint 제약조건이름(테이블명_칼럼명_제약조건약어) 제약조건종류(5개중하나)
 
+DROP TABLE memidtable PURGE;
+DROP TABLE memtable PURGE;
+CREATE TABLE memidtable (
+    memid number(6) CONSTRAINT memidtable_memid_pk PRIMARY KEY,
+    memname varchar2(20)
+);
+-- column level 방식
+CREATE TABLE memtable (
+    memname varchar2(20) CONSTRAINT memtable_memname_pk PRIMARY KEY,
+    memtel varchar2(20) CONSTRAINT memtable_memtel_uk UNIQUE,
+    memhobby varchar2(30) CONSTRAINT memtable_memhobby_nn NOT NULL,
+    membi number(5) CONSTRAINT memtable_membi_ck CHECK (membi>1000),
+    memid number(6) CONSTRAINT memtable_memid_fk REFERENCES memidtable(memid)
+);
+-- table level 방식
+CREATE TABLE memtable (
+    memname varchar2(20),
+    memtel varchar2(20),
+    memhobby varchar2(30) CONSTRAINT memtable_memhobby_nn NOT NULL,
+    membi number(5),
+    memid number(6),
+    CONSTRAINT memtable_memname_pk PRIMARY KEY(memname),
+    CONSTRAINT memtable_memtel_uk UNIQUE(memtel),
+    CONSTRAINT memtable_membi_ck CHECK (membi>1000),
+    CONSTRAINT memtable_memid_fk FOREIGN KEY(memid) REFERENCES memidtable(memid)
+);
+
+INSERT INTO memtable (memname, memtel, memhobby, membi) VALUES ('luke', '4082429135', 'sleep', '5000');
+INSERT INTO memtable (memname, memtel, memhobby, membi) VALUES ('lucas', '4082429133', 'standing', '5000');
+
+INSERT INTO memidtable (memid, memname) VALUES (1, 'kai');
+INSERT INTO memidtable (memid, memname) VALUES (2, 'jake');
+
+SELECT * FROM memidtable;
+SELECT * FROM memtable;
+
+-- 테이블 제약조건 확인
+SELECT * FROM user_cons_columns WHERE table_name='MEMTABLE';
+
+
+-- view (테이블 추출개념 + 보안)
+-- 1) 부서 아이디가 100번인 사원의 이름과 전화번호만 들어가는 table을 만들어라
+CREATE TABLE dpt_100_table AS (SELECT first_name, phone_number FROM employees WHERE department_id = 100);
+-- 2) 부서 아이디가 100번인 사원의 이름과 전화번호만 들어가는 view를 만들어라
+CREATE VIEW dpt_100_view AS (SELECT first_name, phone_number FROM employees WHERE department_id = 100);
+--> 위 두작업의 결과는 같지만 내용은 다름 [table은 실제 자료가 있지만 view는 sql문장만 있음]
+-- view를 수정하려면 create or replace view 로 해주어야함
+CREATE OR REPLACE VIEW dpt_100_view AS (SELECT first_name, phone_number FROM employees WHERE department_id = 50);
+SELECT view_name, text FROM user_views;
+SELECT * FROM dpt_100_view;
+DROP VIEW dpt_100_view;
+-- manager_id의 update방지
+CREATE OR REPLACE VIEW dpt_100_view AS (SELECT * FROM employees WHERE manager_id = 121) WITH CHECK OPTION;
+UPDATE dpt_100_view SET manager_id = 150 WHERE employee_id = 131; -- check option때문에 안됨
+-- view 수정 자체를 금지
+CREATE OR REPLACE VIEW dpt_100_view AS (SELECT * FROM employees WHERE manager_id = 121) WITH READ ONLY;
+
+
+-- 순번 (일련번호)
+CREATE SEQUENCE sawon_seq;
+DESC sawon;
+INSERT INTO sawon (emp_id, emp_name, emp_address) VALUES (sawon_seq.NEXTVAL, 'hulk', 'tokyo'); 
 
