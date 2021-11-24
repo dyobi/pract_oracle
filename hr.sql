@@ -433,3 +433,33 @@ CREATE INDEX idx_employees_salary ON employees(salary);
 -- Rebuild the index when salary has been changed
 ALTER INDEX idx_employees_salary REBUILD;
 
+
+-- sqlplus 문법
+SET SERVEROUTPUT ON
+DECLARE
+ id NUMBER(5) := 10;
+ irum VARCHAR2(20) := 'hong';
+ sungbyul VARCHAR2(20) default 'M';
+ d DATE := sysdate;
+BEGIN
+dbms_output.put_line('id= ' || id || ', irum= ' || irum || ', sungbyul= ' || sungbyul || ', date= ' || d);
+END;
+/
+
+
+-- procedure
+SET SERVEROUTPUT ON
+CREATE OR REPLACE PROCEDURE moon_mom(v_earth_mom IN NUMBER)
+IS v_moon_mom NUMBER (7,2);
+BEGIN
+v_moon_mom := ROUND(v_earth_mom / 6.0);
+dbms_output.put_line('Your weight on the moon is ' || v_moon_mom);
+END;
+/
+
+EXEC moon_mom(100.24);
+
+-- including error cases
+SET SERVEROUTPUT ON
+
+
