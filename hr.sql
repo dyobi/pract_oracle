@@ -418,3 +418,18 @@ CREATE SEQUENCE sawon_seq;
 DESC sawon;
 INSERT INTO sawon (emp_id, emp_name, emp_address) VALUES (sawon_seq.NEXTVAL, 'hulk', 'tokyo'); 
 
+
+
+-- INDEX -> 조회속도 빠르게
+-- 인덱스 만들어 사용하기 (책의 목차)
+-- (단, 인덱스가 무조건 속도를 빠르게 하지는 않는다)
+-- 행 수가 많은 경우 join등에 빈번하게 사용되는 컬럼에는 좋으나
+-- 수정 등 변경이 많은 경우에는 인덱스도 같이 수정변경해야하므로 사용하지 않는것이 좋다
+SELECT e.salary AS "급여", d.department_name AS "부서명" FROM employees e JOIN departments d ON (e.department_id = d.department_id(+)) WHERE e.salary > 2000;
+
+-- Index about the salary
+DROP INDEX idx_employees_salary;
+CREATE INDEX idx_employees_salary ON employees(salary);
+-- Rebuild the index when salary has been changed
+ALTER INDEX idx_employees_salary REBUILD;
+
