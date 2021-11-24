@@ -452,6 +452,10 @@ SET SERVEROUTPUT ON
 CREATE OR REPLACE PROCEDURE moon_mom(v_earth_mom IN NUMBER)
 IS v_moon_mom NUMBER (7,2);
 BEGIN
+IF (v_earth_mom <= 0) THEN
+dbms_output.put_line('몸무게이므로 양수를 입력하시오');
+RETURN;
+END IF;
 v_moon_mom := ROUND(v_earth_mom / 6.0);
 dbms_output.put_line('Your weight on the moon is ' || v_moon_mom);
 END;
