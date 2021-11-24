@@ -458,8 +458,6 @@ END;
 /
 
 EXEC moon_mom(100.24);
-
--- including error cases
-SET SERVEROUTPUT ON
+--------------------------
 
 
