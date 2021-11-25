@@ -443,3 +443,4 @@ ALTER INDEX idx_employees_salary REBUILD;
 -- TRIGGER
 -- 어떤 테이블에 dml 이 발생했을떄 자동으로 실행되는 프로그램
 -- .before / .after
+
