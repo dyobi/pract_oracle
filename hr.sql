@@ -434,34 +434,12 @@ CREATE INDEX idx_employees_salary ON employees(salary);
 ALTER INDEX idx_employees_salary REBUILD;
 
 
--- sqlplus 문법
-SET SERVEROUTPUT ON
-DECLARE
- id NUMBER(5) := 10;
- irum VARCHAR2(20) := 'hong';
- sungbyul VARCHAR2(20) default 'M';
- d DATE := sysdate;
-BEGIN
-dbms_output.put_line('id= ' || id || ', irum= ' || irum || ', sungbyul= ' || sungbyul || ', date= ' || d);
-END;
-/
+-- CURSOR
+-- cursor는 sql 커서를 말하며 multi row 저장관련 메모리 포인터
+-- (select 결과로 나오는 여러개의 행을 저장하는 종이박스의 개념)
+-- 종류 : implicit cursor / explicit cursor
 
 
--- procedure
-SET SERVEROUTPUT ON
-CREATE OR REPLACE PROCEDURE moon_mom(v_earth_mom IN NUMBER)
-IS v_moon_mom NUMBER (7,2);
-BEGIN
-IF (v_earth_mom <= 0) THEN
-dbms_output.put_line('몸무게이므로 양수를 입력하시오');
-RETURN;
-END IF;
-v_moon_mom := ROUND(v_earth_mom / 6.0);
-dbms_output.put_line('Your weight on the moon is ' || v_moon_mom);
-END;
-/
-
-EXEC moon_mom(100.24);
---------------------------
-
-
+-- TRIGGER
+-- 어떤 테이블에 dml 이 발생했을떄 자동으로 실행되는 프로그램
+-- .before / .after
